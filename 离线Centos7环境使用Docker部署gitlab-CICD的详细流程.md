@@ -3,7 +3,7 @@
 - [环境](#环境)
 - [实施方案](#实施方案)
   - [方案一](#方案一)
-      - [结果](#结果)
+    - [结果](#结果)
   - [方案二](#方案二)
     - [结果](#结果-1)
 - [一、安装docker](#一安装docker)
@@ -41,7 +41,7 @@
 
 ## 环境
 windowsServer2008R
-Centos7
+Centos 7.5.1804
 
 ## 实施方案
 ### 方案一
@@ -51,7 +51,7 @@ Centos7
 - centos7.5中安装docker
 - docker中运行gitlab、gitlab-runner
 
-##### 结果
+#### 结果
 gitlab非常占用资源，官网推荐至少有4G的内存用来运行，winServer服务器本身要跑很多JAVA服务，所以我们抠抠搜搜的分配了4G内存给虚拟机，结果是只是跑了docker-gitlab，虚拟机非常容易出现卡死状态，所以我放弃了此方案，虚拟机上只保留gitlab-runner，以及用以为gitlab储存数据备份
 
 此方案除了虚拟机安装、网络处理、共享挂载等方面需要单独处理外，与方案二无异
@@ -170,7 +170,7 @@ REPOSITORY             TAG                 IMAGE ID            CREATED          
 gitlab/gitlab-runner   latest              f726de7cf9ee        11 days ago         443MB
 gitlab/gitlab-ce       latest              f2e48729e35c        3 weeks ago         2GB
 ```
-(PS:如果出现镜像名称为none的情况，可以用docker tag imageid name:tag命令给镜像重命名)
+>PS:如果出现镜像名称为none的情况，可以用docker tag imageid name:tag命令给镜像重命名
 
 
 #### 环境配置
@@ -237,7 +237,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 ```
 
-浏览器进入http://gitlab的IP地址:8090，使用root账户登录并设置密码即可进入管理员界面
+浏览器进入`http://gitlab的IP地址:8090`，使用root账户登录,会提示需要设置root密码，之后用root及密码登录即可进入管理员界面
 
 
 ## 三、安装gitlab-runner
@@ -462,7 +462,9 @@ tail -300 /var/log/cron
 #### 坑点
 
 > 注意自动备份脚本文件中备份命令不能有`-it`命令，原因是`exec `后面加了 `-it` 参数就开启了一个终端，计划任务是无法进入任何终端的，会导致命令无效
+
 > 注意权限的问题，如果发现定时任务执行了无效果，可以去看看`/var/spool/mail/root`的日志，我操作的时候发现很诡异的情况就是`root`居然没有`auto_backup.sh`执行权限，改成755就好了
+
 > 如果发现文件权限没有问题，那么很有可能是`selinux`的问题，去到`/ect/selinux/config`中看`SELINUX`的配置，把它设置为`disabled`即可。这个比较坑，会导致`root`没有权限
 
 
@@ -533,7 +535,7 @@ http://[userName]:[password]@XXXX.git
 
 
 ## 结语
-以上就是本次搭建的整体流程，感谢参考文献中的同学提供了很多参考，有不合适的地方，还请各位大神指正
+感谢各位参考文章中的作者，为搭建提供了很多参考和帮助，这里把本次搭建的整体流程整理出来，有不对的地方，还请各位大神指正
 
 ## 参考链接
 - [CentOS7离线部署docker](https://juejin.im/post/5d47d0a76fb9a06afa326d62)
