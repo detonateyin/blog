@@ -469,6 +469,52 @@ tail -300 /var/log/cron
 
 
 #### 双机备份
+
+定时通过`scp`向linux服务器拷贝我们的备份文件，以防止我们的服务器出现问题，能够通过找回代码资产
+
+首先需要向远程服务器传递我们的ssh公钥，如果之前没有生成秘钥，则执行
+
+```
+ssh-keygen -t rsa
+```
+一路
+生成过秘钥，命令行会提示是否覆盖，一路回车就行
+
+然后在`~/.ssh`目录下找到公钥文件`id_ras.pub`文件，上传到远程服务器
+```
+scp id_rsa.pub 服务器登录用户名(root)@XXX.XXX.XXX.XXX(服务器地址):/tmp/id_rsa.pub.gitlab
+```
+
+然后使用同一用户(这里用root)，登录远程服务器，上找到`~/.ssh`目录(为方便使用root用户目录，其他用户则需要到`/home/XXX用户名/.ssh`)，如果没有就创建一个，或者用`ssh-keygen -t rsa`生成秘钥文件，建议使用`ssh-keygen`命令
+
+找到`~/.ssh`目录下的`authorized_keys`文件，如果没有就创建一个
+
+```
+# 创建authorized_keys文件
+touch authorized_keys
+```
+
+然后将`/tmp/id_rsa.pub.gitlab`追加到`authorized_keys`中
+
+```
+cat id_rsa.pub.gitlab >> ~/.ssh/authorized_keys
+```
+
+然后回到gitlab服务器，用ssh登录远程备份服务器，测试公钥是否配对成功
+
+```
+ssh 用户名(这里用root)@远程服务器地址
+```
+没有提示输入密码，则成功
+
+如果失败，则检查拷贝过程是否成功，查看`authorized_keys`中追加的公钥是否与gitlab服务器的公钥一致，然后通过调试信息查看问题
+```
+ssh -vvv 用户名(这里用root)@远程服务器地址
+```
+
+>ssh对目录的权限有要求，需注意`~/.ssh`的是700， `~/.ssh/* `的是600
+
+
 先在`/mnt/gitlab/data/backups/`中添加一个自动备份的执行脚本`auto_scp.sh`
 
 ```
