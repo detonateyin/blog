@@ -25,15 +25,14 @@
     - [注册](#注册)
     - [测试](#测试)
     - [坑点](#坑点)
-- [备份](#备份)
+- [四、备份](#四备份)
     - [手动备份](#手动备份)
     - [自动备份](#自动备份)
     - [坑点](#坑点-1)
     - [双机备份](#双机备份)
-- [同步](#同步)
+- [五、远程同步](#五远程同步)
 - [结语](#结语)
 - [参考链接](#参考链接)
-
 
 
 ## 需求
@@ -405,7 +404,7 @@ clone_url = "http://XXX.XXX.XXX.XXX:8090/"
 ```
 
 
-## 备份
+## 四、备份
 GitLab默认备份目录为`/var/opt/gitlab/backups`，可以修改`/etc/gitlab/gitlab.rb`里面的默认存放备份文件目录，这里使用默认备份目录
 ```
 gitlab_rails['backup_path'] = '/var/opt/gitlab/backups'
@@ -429,7 +428,7 @@ docker exec -it gitlab gitlab-rake gitlab:backup:create
 ```
 docker exec gitlab gitlab-rake gitlab:backup:create
 ```
-然后我们手动执行一下测试脚本是否编写正确
+我们手动执行一下测试脚本是否编写正确，看到有生成备份包即可
 ```
 sh auto_backup.sh
 ```
@@ -475,12 +474,32 @@ tail -300 /var/log/cron
 首先需要向远程服务器传递我们的ssh公钥，如果之前没有生成秘钥，则执行
 
 ```
-ssh-keygen -t rsa
+[root@centos-linux ~]ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):  # 密钥存放路径
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase):  # 输入密码。输入密码之后，以后每次都要输入密码。请根据你的安全需要决定是否需要密码，如果不需要，直接回车
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:di6MX8faj+TPOBvZwL60ajEJDgjrcO1peb209P/R3EU root@centos-linux.shared
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|  .              |
+|   + .          E|
+|. o o . .  .   . |
+| + . o +S...o   .|
+|  . = .+=o+o + oo|
+|   . ..oo+ooO o +|
+|       .oooB.B . |
+|        ..ooX*=  |
++----[SHA256]-----+
 ```
-一路
-生成过秘钥，命令行会提示是否覆盖，一路回车就行
+如果之前生成过秘钥，命令行会提示是否覆盖，一路回车就行
 
-然后在`~/.ssh`目录下找到公钥文件`id_ras.pub`文件，上传到远程服务器
+在`~/.ssh`目录下找到公钥文件`id_ras.pub`文件，上传到远程服务器
 ```
 scp id_rsa.pub 服务器登录用户名(root)@XXX.XXX.XXX.XXX(服务器地址):/tmp/id_rsa.pub.gitlab
 ```
@@ -494,7 +513,7 @@ scp id_rsa.pub 服务器登录用户名(root)@XXX.XXX.XXX.XXX(服务器地址):/
 touch authorized_keys
 ```
 
-然后将`/tmp/id_rsa.pub.gitlab`追加到`authorized_keys`中
+将`/tmp/id_rsa.pub.gitlab`追加到`authorized_keys`中
 
 ```
 cat id_rsa.pub.gitlab >> ~/.ssh/authorized_keys
@@ -565,7 +584,7 @@ scp $BACKUPFILE_SEND_TO_REMOTE $RemoteUser@$RemoteIP:$BACKUPDIR
 
 之后还可以做一些`备份文件自动删除`、`gitlab自动恢复`等定时操作，具体的可以查看参考文献中的步骤，这里就不赘述了
 
-## 同步
+## 五、远程同步
 
 我们的需求是，本地有一个库，远端也有一个库，我们分开单独管理，但本地库代码更新需要推送给远端
 
