@@ -39,8 +39,8 @@
 公司在内网环境下，需要自建一套gitlab的CI/CD环境
 
 ## 环境
-windowsServer2008R
-Centos 7.5.1804
+- windowsServer2008R
+- Centos 7.5.1804
 
 ## 实施方案
 ### 方案一
@@ -70,7 +70,7 @@ gitlab非常占用资源，官网推荐至少有4G的内存用来运行，winSer
 #### 准备环境
 
 由于是内网环境，离线安装docker相对来说较为麻烦，需要下载多个rpm包进行安装和更新，这里把需要使用的包列出来。
-在http://mirrors.163.com/centos/7/os/x86_64/Packages/中下载如下rpm安装包：
+在[http://mirrors.163.com/centos/7/os/x86_64/Packages/](http://mirrors.163.com/centos/7/os/x86_64/Packages/)中下载如下rpm安装包：
 
     audit-libs-python-2.8.5-4.el7.x86_64.rpm
     checkpolicy-2.5-8.el7.x86_64.rpm
@@ -90,15 +90,15 @@ gitlab非常占用资源，官网推荐至少有4G的内存用来运行，winSer
     libsepol-2.5-10.el7.x86_64.rpm
     policycoreutils-2.5-33.el7.x86_64.rpm
     
-在https://download.docker.com/linux/centos/7/x86_64/stable/Packages/中下载docker的安装包：
+在[https://download.docker.com/linux/centos/7/x86_64/stable/Packages/](https://download.docker.com/linux/centos/7/x86_64/stable/Packages/)中下载docker的安装包：
 
     docker-ce-17.12.0.ce-1.el7.centos.x86_64.rpm
     
-在http://rpm.pbone.net/index.php3/stat/4/idpl/36266349/dir/scientific_linux_7/com/container-selinux-2.9-4.el7.noarch.rpm.html中下载container-selinux安装包：
+在[http://rpm.pbone.net/index.php3/stat/4/idpl/36266349/dir/scientific_linux_7/com/container-selinux-2.9-4.el7.noarch.rpm.html](http://rpm.pbone.net/index.php3/stat/4/idpl/36266349/dir/scientific_linux_7/com/container-selinux-2.9-4.el7.noarch.rpm.html)中下载container-selinux安装包：
 
     container-selinux-2.9-4.el7.noarch.rpm
 
-这里没有按照帖子中的方法将其分为需要update的包、需要install的包分别更新和安装，因为在实际调试中发现，包的安装和更新，会有相互依赖前置，导致更新或者安装失败，我这里没有过多尝试和研究，简单直接使用无差别强制安装来达到目的，还请这方面有经验的同学帮忙解答。
+这里没有按照参考帖中的方法将其分为需要update的包、需要install的包分别更新和安装，因为在实际调试中发现，包的安装和更新，会有相互依赖前置，导致更新或者安装失败，我这里直接使用无差别强制安装来覆盖安装了。
 
 #### 安装
 先将下载好的依赖打成一个包
